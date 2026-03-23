@@ -568,7 +568,7 @@ function openLink(url){window.open(url,'_blank')}
 /* ===== GITHUB SETTINGS ===== */
 function loadGHSettings(){
   const saved=localStorage.getItem('gh_config');
-  if(saved){try{ghConfig={...ghConfig,...JSON.parse(saved)};}catch(e){}}
+  if(saved){try{const p=JSON.parse(saved);ghConfig={...ghConfig,...p};}catch(e){}}
 }
 
 function saveGHSettings(){
@@ -576,8 +576,8 @@ function saveGHSettings(){
   ghConfig.user=document.getElementById('ghUser').value.trim();
   ghConfig.repo=document.getElementById('ghRepo').value.trim();
   ghConfig.branch=document.getElementById('ghBranch').value.trim();
-  localStorage.setItem('gh_config',JSON.stringify({user:ghConfig.user,repo:ghConfig.repo,branch:ghConfig.branch}));
-  // Token saved only in memory for security, not localStorage
+  // Save everything including token so user doesn't re-enter on reload
+  localStorage.setItem('gh_config',JSON.stringify({token:ghConfig.token,user:ghConfig.user,repo:ghConfig.repo,branch:ghConfig.branch}));
   document.getElementById('ghTestResult').innerHTML='<div class="alert alert-success">✓ Settings saved! Token stored in memory.</div>';
 }
 
@@ -635,11 +635,17 @@ async function loadArtworks(){
   loadGHSettings();
   updateGHStatusBanner();
   try{
-    const url=`https://raw.githubusercontent.com/${ghConfig.user}/${ghConfig.repo}/${ghConfig.branch}/${GH_ARTWORKS_PATH}?t=${Date.now()}`;
-    const r=await fetch(url);
-    if(r.ok){artworks=await r.json();}
-    else artworks=[];
-  }catch(e){artworks=[]}
+    // Use GitHub API instead of raw URL to always get latest version
+    const r=await fetch(`https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/${GH_ARTWORKS_PATH}`,{
+      headers:ghConfig.token?{Authorization:`token ${ghConfig.token}`,'Accept':'application/vnd.github.v3+json'}:{'Accept':'application/vnd.github.v3+json'}
+    });
+    if(r.ok){
+      const d=await r.json();
+      // GitHub API returns content as base64
+      const decoded=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
+      artworks=JSON.parse(decoded);
+    } else artworks=[];
+  }catch(e){artworks=[];console.error('Load error:',e)}
   await loadAbout();
   renderPublicGallery();
 }
@@ -655,9 +661,14 @@ function updateGHStatusBanner(){
 
 async function loadAbout(){
   try{
-    const url=`https://raw.githubusercontent.com/${ghConfig.user}/${ghConfig.repo}/${ghConfig.branch}/about.json?t=${Date.now()}`;
-    const r=await fetch(url);
-    if(r.ok){const d=await r.json();applyAboutToPublic(d);}
+    const r=await fetch(`https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/about.json`,{
+      headers:ghConfig.token?{Authorization:`token ${ghConfig.token}`,'Accept':'application/vnd.github.v3+json'}:{'Accept':'application/vnd.github.v3+json'}
+    });
+    if(r.ok){
+      const d=await r.json();
+      const decoded=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
+      applyAboutToPublic(JSON.parse(decoded));
+    }
   }catch(e){}
 }
 
@@ -670,14 +681,17 @@ function applyAboutToPublic(d){
 
 async function loadAboutIntoForm(){
   try{
-    const url=`https://raw.githubusercontent.com/${ghConfig.user}/${ghConfig.repo}/${ghConfig.branch}/about.json?t=${Date.now()}`;
-    const r=await fetch(url);
+    const r=await fetch(`https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/about.json`,{
+      headers:ghConfig.token?{Authorization:`token ${ghConfig.token}`,'Accept':'application/vnd.github.v3+json'}:{'Accept':'application/vnd.github.v3+json'}
+    });
     if(r.ok){
       const d=await r.json();
-      document.getElementById('aboutName').value=d.name||'';
-      document.getElementById('aboutTagline').value=d.tagline||'';
-      document.getElementById('aboutBio').value=d.bio||'';
-      if(d.photo){aboutPhotoData=d.photo;document.getElementById('aboutPhotoPreview').src=d.photo;document.getElementById('aboutPhotoPreviewBox').style.display='block';document.getElementById('aboutPhotoLabel').textContent='Current photo loaded'}
+      const decoded=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
+      const data=JSON.parse(decoded);
+      document.getElementById('aboutName').value=data.name||'';
+      document.getElementById('aboutTagline').value=data.tagline||'';
+      document.getElementById('aboutBio').value=data.bio||'';
+      if(data.photo){aboutPhotoData=data.photo;document.getElementById('aboutPhotoPreview').src=data.photo;document.getElementById('aboutPhotoPreviewBox').style.display='block';document.getElementById('aboutPhotoLabel').textContent='Current photo loaded'}
     }
   }catch(e){}
 }
