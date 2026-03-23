@@ -16,14 +16,5 @@
     "collection": "Render",
     "visible": true,
     "img": "https://raw.githubusercontent.com/MANTESH-dot/swaddy-art-gallery/main/artworks/georgiosa-1774258463371.png"
-  },
-  {
-    "id": 3,
-    "title": "Hi",
-    "category": "Watercolor",
-    "description": "H",
-    "collection": "",
-    "visible": false,
-    "img": "https://raw.githubusercontent.com/MANTESH-dot/swaddy-art-gallery/main/artworks/hi-1774260542274.jpg"
   }
 ]
