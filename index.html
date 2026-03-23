@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Swaddy Art Gallery</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -12,159 +12,189 @@
   --accent:#c8a96e;--accent2:#e8c98e;--border:#1e1e35;--border2:#2a2a45;
   --danger:#c0392b;--success:#27ae60;
   --glass:rgba(255,255,255,0.04);--glass2:rgba(200,169,110,0.08);
+  --nav-h:64px;
 }
+html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-height:100vh;overflow-x:hidden}
 button{cursor:pointer;font-family:inherit}
 canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(7,7,15,0.75);border-bottom:1px solid var(--border2);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;backdrop-filter:blur(20px)}
-.nav-logo{font-size:1.1rem;letter-spacing:0.2em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase}
-.nav-links{display:flex;gap:1.5rem;align-items:center}
-.nav-btn{background:transparent;border:none;color:var(--text2);font-size:0.82rem;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.3s;font-family:'Georgia',serif;position:relative;padding:4px 0}
+/* ===== NAV ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(7,7,15,0.85);border-bottom:1px solid var(--border2);height:var(--nav-h);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem}
+.nav-logo{font-size:1rem;letter-spacing:0.18em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;white-space:nowrap}
+.nav-links{display:flex;gap:1.25rem;align-items:center}
+.nav-btn{background:transparent;border:none;color:var(--text2);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.3s;font-family:'Georgia',serif;padding:4px 0;position:relative}
 .nav-btn::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s}
 .nav-btn:hover{color:var(--accent)}.nav-btn:hover::after{width:100%}
-.admin-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 16px;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.3s;border-radius:2px}
-.admin-btn:hover{background:var(--accent);color:#000;box-shadow:0 0 20px rgba(200,169,110,0.4)}
+.admin-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 14px;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.3s;border-radius:2px}
+.admin-btn:hover{background:var(--accent);color:#000}
 
-.page{display:none;padding-top:64px;min-height:100vh;position:relative;z-index:1}
+/* Mobile nav hamburger */
+.hamburger{display:none;flex-direction:column;gap:5px;background:transparent;border:none;padding:4px;z-index:110}
+.hamburger span{display:block;width:24px;height:2px;background:var(--accent);transition:all 0.3s;border-radius:2px}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-nav{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:rgba(7,7,15,0.98);border-bottom:1px solid var(--border2);backdrop-filter:blur(20px);z-index:99;flex-direction:column;padding:1rem 1.5rem 1.5rem}
+.mobile-nav.open{display:flex}
+.mobile-nav button{background:transparent;border:none;color:var(--text2);font-size:1rem;letter-spacing:0.12em;text-transform:uppercase;padding:14px 0;text-align:left;border-bottom:1px solid var(--border);font-family:'Georgia',serif;transition:color 0.2s}
+.mobile-nav button:last-child{border-bottom:none;color:var(--accent);border:1px solid var(--accent);text-align:center;margin-top:0.75rem;padding:12px}
+.mobile-nav button:hover{color:var(--accent)}
+
+/* ===== PAGES ===== */
+.page{display:none;padding-top:var(--nav-h);min-height:100vh;position:relative;z-index:1}
 .page.active{display:block}
 
-.hero{height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;position:relative}
+/* ===== HERO ===== */
+.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 1.5rem;position:relative}
 .hero-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none}
-.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(200,169,110,0.12),transparent 70%);top:10%;left:50%;transform:translateX(-50%)}
-.orb2{width:300px;height:300px;background:radial-gradient(circle,rgba(120,80,200,0.1),transparent 70%);top:30%;left:10%}
-.orb3{width:250px;height:250px;background:radial-gradient(circle,rgba(80,160,200,0.08),transparent 70%);bottom:20%;right:10%}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--glass2);border:1px solid rgba(200,169,110,0.25);padding:6px 18px;border-radius:50px;font-size:0.72rem;letter-spacing:0.25em;color:var(--accent);text-transform:uppercase;margin-bottom:1.75rem;backdrop-filter:blur(10px)}
-.hero-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+.orb1{width:min(500px,100vw);height:min(500px,100vw);background:radial-gradient(circle,rgba(200,169,110,0.12),transparent 70%);top:10%;left:50%;transform:translateX(-50%)}
+.orb2{width:250px;height:250px;background:radial-gradient(circle,rgba(120,80,200,0.1),transparent 70%);top:30%;left:5%}
+.orb3{width:200px;height:200px;background:radial-gradient(circle,rgba(80,160,200,0.08),transparent 70%);bottom:20%;right:5%}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--glass2);border:1px solid rgba(200,169,110,0.25);padding:6px 16px;border-radius:50px;font-size:0.7rem;letter-spacing:0.22em;color:var(--accent);text-transform:uppercase;margin-bottom:1.5rem;backdrop-filter:blur(10px)}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
-.hero-title{font-size:clamp(3rem,7vw,6rem);font-weight:300;line-height:1.05;margin-bottom:1.5rem;letter-spacing:0.04em;animation:fadeUp 1s ease both}
+.hero-title{font-size:clamp(2.2rem,8vw,6rem);font-weight:300;line-height:1.08;margin-bottom:1.25rem;letter-spacing:0.03em;animation:fadeUp 1s ease both}
 .hero-title em{background:linear-gradient(135deg,var(--accent),#f0d090,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.hero-desc{font-size:1rem;color:var(--text2);max-width:500px;line-height:1.9;margin-bottom:2.5rem;animation:fadeUp 1s 0.2s ease both}
-.hero-cta{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:14px 36px;font-size:0.85rem;letter-spacing:0.15em;text-transform:uppercase;transition:all 0.4s;position:relative;overflow:hidden;animation:fadeUp 1s 0.4s ease both}
+.hero-desc{font-size:clamp(0.88rem,2.5vw,1rem);color:var(--text2);max-width:480px;line-height:1.9;margin-bottom:2rem;animation:fadeUp 1s 0.2s ease both}
+.hero-cta{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:13px 32px;font-size:0.82rem;letter-spacing:0.15em;text-transform:uppercase;transition:all 0.4s;position:relative;overflow:hidden;animation:fadeUp 1s 0.4s ease both;touch-action:manipulation}
 .hero-cta::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease}
-.hero-cta:hover::before{transform:scaleX(1)}
+.hero-cta:hover::before,.hero-cta:active::before{transform:scaleX(1)}
 .hero-cta span{position:relative;z-index:1;transition:color 0.4s}
-.hero-cta:hover span{color:#000}
-.hero-cta:hover{box-shadow:0 0 30px rgba(200,169,110,0.4)}
-.scroll-hint{position:absolute;bottom:2rem;font-size:0.72rem;letter-spacing:0.25em;color:var(--text3);text-transform:uppercase;animation:bounce 2s infinite}
+.hero-cta:hover span,.hero-cta:active span{color:#000}
+.scroll-hint{position:absolute;bottom:1.5rem;font-size:0.7rem;letter-spacing:0.22em;color:var(--text3);text-transform:uppercase;animation:bounce 2s infinite}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 .shapes{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.shape{position:absolute;border:1px solid rgba(200,169,110,0.15);animation:float linear infinite}
-.shape:nth-child(1){width:80px;height:80px;top:15%;left:8%;animation-duration:18s;transform:rotate(45deg)}
-.shape:nth-child(2){width:50px;height:50px;top:60%;left:85%;animation-duration:14s;border-radius:50%}
-.shape:nth-child(3){width:120px;height:60px;top:75%;left:5%;animation-duration:22s;transform:rotate(20deg)}
-.shape:nth-child(4){width:40px;height:40px;top:20%;right:12%;animation-duration:16s}
-.shape:nth-child(5){width:90px;height:90px;top:45%;left:92%;animation-duration:20s;border-radius:50%;border-color:rgba(120,80,200,0.15)}
-@keyframes float{0%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-30px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
+.shape{position:absolute;border:1px solid rgba(200,169,110,0.12);animation:float linear infinite}
+.shape:nth-child(1){width:60px;height:60px;top:15%;left:6%;animation-duration:18s}
+.shape:nth-child(2){width:40px;height:40px;top:60%;left:88%;animation-duration:14s;border-radius:50%}
+.shape:nth-child(3){width:80px;height:40px;top:78%;left:4%;animation-duration:22s}
+.shape:nth-child(4){width:35px;height:35px;top:18%;right:8%;animation-duration:16s}
+.shape:nth-child(5){width:70px;height:70px;top:45%;left:93%;animation-duration:20s;border-radius:50%}
+@keyframes float{0%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-25px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
 
-.section{padding:5rem 2rem;position:relative}
-.section-label{font-size:0.72rem;letter-spacing:0.35em;color:var(--accent);text-transform:uppercase;margin-bottom:0.75rem}
-.section-title{font-size:2rem;font-weight:300;letter-spacing:0.05em}
-.section-header{text-align:center;margin-bottom:3rem}
+/* ===== SECTIONS ===== */
+.section{padding:4rem 1.5rem;position:relative}
+.section-label{font-size:0.7rem;letter-spacing:0.32em;color:var(--accent);text-transform:uppercase;margin-bottom:0.75rem}
+.section-title{font-size:clamp(1.5rem,4vw,2rem);font-weight:300;letter-spacing:0.05em}
+.section-header{text-align:center;margin-bottom:2.5rem}
 
-.filters{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
-.filter-btn{background:transparent;border:1px solid var(--border2);color:var(--text2);padding:7px 20px;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.3s;border-radius:50px;backdrop-filter:blur(8px)}
-.filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glass2);box-shadow:0 0 15px rgba(200,169,110,0.15)}
+/* ===== FILTERS ===== */
+.filters{display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem;padding:0 0.5rem}
+.filter-btn{background:transparent;border:1px solid var(--border2);color:var(--text2);padding:6px 16px;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.3s;border-radius:50px;white-space:nowrap;touch-action:manipulation}
+.filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glass2)}
 
-.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1.75rem;max-width:1200px;margin:0 auto}
-.art-card{background:var(--glass);border:1px solid var(--border2);overflow:hidden;cursor:pointer;transition:border-color 0.3s,box-shadow 0.3s;transform-style:preserve-3d;border-radius:4px;backdrop-filter:blur(8px);animation:cardIn 0.5s ease both}
+/* ===== GALLERY GRID ===== */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:1.25rem;max-width:1200px;margin:0 auto}
+.art-card{background:var(--glass);border:1px solid var(--border2);overflow:hidden;cursor:pointer;transition:border-color 0.3s,box-shadow 0.3s,transform 0.1s;border-radius:6px;backdrop-filter:blur(8px);animation:cardIn 0.5s ease both;-webkit-tap-highlight-color:transparent}
 @keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .art-card:hover{border-color:rgba(200,169,110,0.4);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 30px rgba(200,169,110,0.1)}
+.art-card:active{transform:scale(0.98)}
 .art-card-img-wrap{position:relative;overflow:hidden}
-.art-card img{width:100%;height:250px;object-fit:cover;display:block;background:var(--bg3);transition:transform 0.5s ease}
+.art-card img{width:100%;height:220px;object-fit:cover;display:block;background:var(--bg3);transition:transform 0.5s ease}
 .art-card:hover img{transform:scale(1.05)}
 .art-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,7,15,0.8) 0%,transparent 50%);opacity:0;transition:opacity 0.3s}
 .art-card:hover .art-card-overlay{opacity:1}
-.art-card-body{padding:1.1rem 1.25rem}
-.art-card-category{font-size:0.68rem;letter-spacing:0.22em;color:var(--accent);text-transform:uppercase;margin-bottom:0.4rem}
-.art-card-title{font-size:1rem;margin-bottom:0.35rem}
-.art-card-desc{font-size:0.82rem;color:var(--text2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.empty-gallery{text-align:center;padding:5rem 2rem;color:var(--text3);grid-column:1/-1}
+.art-card-body{padding:1rem 1.1rem}
+.art-card-category{font-size:0.66rem;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-bottom:0.35rem}
+.art-card-title{font-size:0.95rem;margin-bottom:0.3rem}
+.art-card-desc{font-size:0.8rem;color:var(--text2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.empty-gallery{text-align:center;padding:4rem 1.5rem;color:var(--text3);grid-column:1/-1}
 
-.lightbox{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;padding:2rem;backdrop-filter:blur(10px)}
+/* ===== LIGHTBOX ===== */
+.lightbox{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(10px);overflow-y:auto}
 .lightbox.open{display:flex}
-.lightbox-inner{max-width:920px;width:100%;display:flex;gap:2.5rem;align-items:flex-start;animation:fadeUp 0.4s ease}
+.lightbox-inner{max-width:900px;width:100%;display:flex;gap:2rem;align-items:flex-start;animation:fadeUp 0.4s ease;margin:auto}
 .lightbox-img-wrap{flex:1;min-width:0}
-.lightbox-img-wrap img{width:100%;max-height:72vh;object-fit:contain;display:block;border:1px solid var(--border2)}
-.lightbox-info{width:270px;flex-shrink:0}
-.lightbox-category{font-size:0.7rem;letter-spacing:0.25em;color:var(--accent);text-transform:uppercase;margin-bottom:0.75rem}
-.lightbox-title{font-size:1.8rem;font-weight:300;margin-bottom:1rem;line-height:1.2}
-.lightbox-desc{font-size:0.9rem;color:var(--text2);line-height:1.9}
-.lightbox-close{position:fixed;top:1.5rem;right:2rem;background:transparent;border:none;color:var(--text2);font-size:1.8rem;transition:color 0.2s;z-index:201}
+.lightbox-img-wrap img{width:100%;max-height:70vh;object-fit:contain;display:block;border:1px solid var(--border2);border-radius:2px}
+.lightbox-info{width:250px;flex-shrink:0}
+.lightbox-category{font-size:0.68rem;letter-spacing:0.22em;color:var(--accent);text-transform:uppercase;margin-bottom:0.75rem}
+.lightbox-title{font-size:clamp(1.3rem,4vw,1.8rem);font-weight:300;margin-bottom:0.75rem;line-height:1.2}
+.lightbox-desc{font-size:0.88rem;color:var(--text2);line-height:1.9}
+.lightbox-close{position:fixed;top:1rem;right:1.25rem;background:rgba(0,0,0,0.5);border:1px solid var(--border2);color:var(--text2);font-size:1.4rem;transition:color 0.2s;z-index:201;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%}
 .lightbox-close:hover{color:var(--accent)}
 
-.about-inner,.contact-inner{max-width:700px;margin:0 auto;text-align:center}
-.contact-email{color:var(--accent);font-size:1.1rem;letter-spacing:0.05em}
-.ig-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:11px 24px;font-size:0.82rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;transition:all 0.3s;margin-top:1.5rem}
-.ig-btn:hover{background:var(--accent);color:#000;box-shadow:0 0 25px rgba(200,169,110,0.4)}
+/* ===== ABOUT / CONTACT ===== */
+.about-inner,.contact-inner{max-width:680px;margin:0 auto;text-align:center}
+.contact-email{color:var(--accent);font-size:clamp(0.9rem,3vw,1.1rem);letter-spacing:0.05em;word-break:break-all}
+.ig-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:11px 22px;font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:all 0.3s;margin-top:1.5rem;touch-action:manipulation}
+.ig-btn:hover,.ig-btn:active{background:var(--accent);color:#000}
 .about-mini{background:linear-gradient(135deg,rgba(200,169,110,0.05),rgba(120,80,200,0.05));border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-footer{background:rgba(7,7,15,0.9);border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--text3);font-size:0.78rem;letter-spacing:0.12em;backdrop-filter:blur(8px)}
+footer{background:rgba(7,7,15,0.9);border-top:1px solid var(--border);padding:1.5rem;text-align:center;color:var(--text3);font-size:0.75rem;letter-spacing:0.1em}
 
-/* ADMIN */
-.admin-layout{display:flex;min-height:calc(100vh - 64px)}
-.sidebar{width:240px;background:rgba(15,15,26,0.95);border-right:1px solid var(--border);padding:1.5rem 0;flex-shrink:0;backdrop-filter:blur(20px)}
-.sidebar-logo{padding:0 1.25rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem}
-.sidebar-logo p{font-size:0.7rem;letter-spacing:0.15em;color:var(--text3);text-transform:uppercase;margin-top:0.25rem}
-.sidebar-logo strong{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:0.95rem;letter-spacing:0.1em}
+/* ===== ADMIN ===== */
+.admin-layout{display:flex;min-height:calc(100vh - var(--nav-h))}
+.sidebar{width:230px;background:rgba(15,15,26,0.97);border-right:1px solid var(--border);padding:1.25rem 0;flex-shrink:0}
+.sidebar-logo{padding:0 1.1rem 1.25rem;border-bottom:1px solid var(--border);margin-bottom:0.75rem}
+.sidebar-logo p{font-size:0.68rem;letter-spacing:0.14em;color:var(--text3);text-transform:uppercase;margin-top:0.2rem}
+.sidebar-logo strong{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:0.9rem}
 .sidebar-nav{list-style:none}
-.sidebar-nav li button{width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:11px 1.25rem;color:var(--text2);background:transparent;border:none;border-left:2px solid transparent;font-size:0.84rem;letter-spacing:0.06em;font-family:'Georgia',serif;transition:all 0.3s}
+.sidebar-nav li button{width:100%;text-align:left;display:flex;align-items:center;gap:8px;padding:10px 1.1rem;color:var(--text2);background:transparent;border:none;border-left:2px solid transparent;font-size:0.82rem;letter-spacing:0.05em;font-family:'Georgia',serif;transition:all 0.3s;white-space:nowrap}
 .sidebar-nav li button:hover,.sidebar-nav li button.active{color:var(--accent);border-left-color:var(--accent);background:rgba(200,169,110,0.06)}
-.admin-content{flex:1;padding:2rem;overflow-y:auto}
+
+/* Mobile admin sidebar */
+.admin-mobile-tabs{display:none;overflow-x:auto;background:rgba(15,15,26,0.97);border-bottom:1px solid var(--border);padding:0 0.5rem;white-space:nowrap;-webkit-overflow-scrolling:touch}
+.admin-mobile-tabs::-webkit-scrollbar{height:2px}
+.admin-mobile-tabs::-webkit-scrollbar-thumb{background:var(--accent)}
+.admin-tab-btn{display:inline-block;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;padding:12px 14px;font-family:'Georgia',serif;white-space:nowrap;transition:all 0.2s}
+.admin-tab-btn.active,.admin-tab-btn:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+.admin-content{flex:1;padding:1.5rem;overflow-y:auto;min-width:0}
 .admin-section{display:none}.admin-section.active{display:block}
-.admin-header{margin-bottom:2rem}
-.admin-header h2{font-size:1.5rem;font-weight:300}
-.admin-header p{font-size:0.85rem;color:var(--text3);margin-top:0.3rem}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
-.stat-card{background:var(--glass);border:1px solid var(--border2);padding:1.25rem;border-radius:4px;backdrop-filter:blur(8px);transition:border-color 0.3s,transform 0.3s}
+.admin-header{margin-bottom:1.5rem}
+.admin-header h2{font-size:1.4rem;font-weight:300}
+.admin-header p{font-size:0.82rem;color:var(--text3);margin-top:0.25rem}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0.75rem;margin-bottom:1.5rem}
+.stat-card{background:var(--glass);border:1px solid var(--border2);padding:1rem;border-radius:4px;transition:border-color 0.3s,transform 0.3s}
 .stat-card:hover{border-color:rgba(200,169,110,0.3);transform:translateY(-2px)}
-.stat-val{font-size:2rem;font-weight:300;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.stat-label{font-size:0.72rem;letter-spacing:0.15em;color:var(--text3);text-transform:uppercase;margin-top:0.25rem}
-.form-card{background:var(--glass);border:1px solid var(--border2);padding:1.75rem;max-width:680px;border-radius:4px;backdrop-filter:blur(8px)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.form-group{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem}
+.stat-val{font-size:1.8rem;font-weight:300;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-size:0.7rem;letter-spacing:0.12em;color:var(--text3);text-transform:uppercase;margin-top:0.2rem}
+.form-card{background:var(--glass);border:1px solid var(--border2);padding:1.5rem;max-width:680px;border-radius:4px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.9rem}
+.form-group{display:flex;flex-direction:column;gap:0.45rem;margin-bottom:0.9rem}
 .form-group.full{grid-column:1/-1}
-.form-label{font-size:0.76rem;letter-spacing:0.14em;color:var(--text2);text-transform:uppercase}
-input,select,textarea{background:rgba(22,22,42,0.8);border:1px solid var(--border2);color:var(--text);padding:9px 12px;font-size:0.9rem;font-family:inherit;transition:border-color 0.3s;outline:none;width:100%;border-radius:2px}
+.form-label{font-size:0.73rem;letter-spacing:0.12em;color:var(--text2);text-transform:uppercase}
+input,select,textarea{background:rgba(22,22,42,0.8);border:1px solid var(--border2);color:var(--text);padding:9px 11px;font-size:0.88rem;font-family:inherit;transition:border-color 0.3s;outline:none;width:100%;border-radius:2px;-webkit-appearance:none}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,169,110,0.1)}
 select option{background:var(--bg3)}
-textarea{resize:vertical;min-height:90px}
-.pick-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:9px 20px;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.3s}
-.pick-btn:hover{background:var(--accent);color:#000}
-.file-name{font-size:0.82rem;color:var(--text3)}
-.btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:10px 24px;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.3s;border-radius:2px}
-.btn:hover{background:var(--accent);color:#000;box-shadow:0 0 20px rgba(200,169,110,0.3)}
+textarea{resize:vertical;min-height:85px}
+.pick-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:9px 18px;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.3s;touch-action:manipulation}
+.pick-btn:hover,.pick-btn:active{background:var(--accent);color:#000}
+.file-name{font-size:0.8rem;color:var(--text3);word-break:break-all}
+.btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:10px 22px;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.3s;border-radius:2px;touch-action:manipulation}
+.btn:hover,.btn:active{background:var(--accent);color:#000}
 .btn-danger{border-color:var(--danger);color:var(--danger)}
-.btn-danger:hover{background:var(--danger);color:#fff}
+.btn-danger:hover,.btn-danger:active{background:var(--danger);color:#fff}
 .btn-success{border-color:var(--success);color:var(--success)}
-.btn-success:hover{background:var(--success);color:#fff}
-.btn-sm{padding:5px 12px;font-size:0.74rem}
-.alert{padding:10px 14px;font-size:0.85rem;margin-bottom:1rem;border-left:3px solid;border-radius:2px}
+.btn-success:hover,.btn-success:active{background:var(--success);color:#fff}
+.btn-sm{padding:6px 12px;font-size:0.72rem}
+.alert{padding:10px 13px;font-size:0.83rem;margin-bottom:1rem;border-left:3px solid;border-radius:2px;line-height:1.6}
 .alert-success{background:rgba(39,174,96,0.1);border-color:var(--success);color:#2ecc71}
 .alert-error{background:rgba(192,57,43,0.1);border-color:var(--danger);color:#e74c3c}
 .alert-info{background:rgba(200,169,110,0.08);border-color:var(--accent);color:var(--accent)}
-.manage-table{width:100%;border-collapse:collapse}
-.manage-table th{text-align:left;padding:10px 12px;font-size:0.7rem;letter-spacing:0.15em;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border)}
-.manage-table td{padding:10px 12px;font-size:0.88rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.manage-table{width:100%;border-collapse:collapse;font-size:0.84rem}
+.manage-table th{text-align:left;padding:9px 10px;font-size:0.68rem;letter-spacing:0.12em;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border)}
+.manage-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
 .manage-table tr:hover td{background:rgba(255,255,255,0.02)}
-.manage-table img{width:50px;height:40px;object-fit:cover;border:1px solid var(--border)}
-.badge{display:inline-block;padding:2px 8px;font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;border-radius:2px}
+.manage-table img{width:44px;height:36px;object-fit:cover;border:1px solid var(--border);border-radius:2px}
+.badge{display:inline-block;padding:2px 7px;font-size:0.66rem;letter-spacing:0.06em;text-transform:uppercase;border-radius:2px}
 .badge-visible{background:rgba(39,174,96,0.15);color:#2ecc71}
 .badge-hidden{background:rgba(192,57,43,0.12);color:#e74c3c}
-.td-actions{display:flex;gap:6px;flex-wrap:wrap}
-.table-wrap{overflow-x:auto}
-.img-preview-box{display:none;border:1px solid var(--border2);padding:0.5rem;background:var(--bg3);max-width:300px;margin-top:0.5rem;border-radius:2px}
-.img-preview-box img{width:100%;max-height:180px;object-fit:contain;display:block}
-.img-preview-box p{font-size:0.72rem;color:var(--success);margin-top:0.4rem}
-.saving-indicator{font-size:0.75rem;color:var(--success);letter-spacing:0.1em;display:none}
+.td-actions{display:flex;gap:5px;flex-wrap:wrap}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.img-preview-box{display:none;border:1px solid var(--border2);padding:0.5rem;background:var(--bg3);max-width:280px;margin-top:0.5rem;border-radius:2px}
+.img-preview-box img{width:100%;max-height:160px;object-fit:contain;display:block}
+.img-preview-box p{font-size:0.7rem;color:var(--success);margin-top:0.35rem}
+.saving-indicator{font-size:0.72rem;color:var(--success);letter-spacing:0.08em;display:none}
 
 /* TOKEN SETUP */
-.token-banner{background:linear-gradient(135deg,rgba(200,169,110,0.1),rgba(120,80,200,0.08));border:1px solid rgba(200,169,110,0.3);padding:1.25rem 1.5rem;border-radius:4px;margin-bottom:1.5rem;max-width:680px}
-.token-banner h4{color:var(--accent);font-size:0.9rem;margin-bottom:0.5rem;font-weight:400}
-.token-banner p{color:var(--text2);font-size:0.82rem;line-height:1.7}
-.token-banner a{color:var(--accent);text-decoration:underline}
-.publish-progress{background:var(--bg3);border:1px solid var(--border2);padding:1rem 1.25rem;border-radius:4px;margin-top:1rem;display:none;max-width:680px}
-.progress-step{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:0.84rem;color:var(--text2)}
+.token-banner{background:linear-gradient(135deg,rgba(200,169,110,0.1),rgba(120,80,200,0.08));border:1px solid rgba(200,169,110,0.3);padding:1.1rem 1.25rem;border-radius:4px;margin-bottom:1.25rem;max-width:680px}
+.token-banner h4{color:var(--accent);font-size:0.88rem;margin-bottom:0.5rem;font-weight:400}
+.token-banner p{color:var(--text2);font-size:0.8rem;line-height:1.75}
+.token-banner a{color:var(--accent);text-decoration:underline;cursor:pointer}
+.publish-progress{background:var(--bg3);border:1px solid var(--border2);padding:1rem 1.1rem;border-radius:4px;margin-top:1rem;display:none;max-width:680px}
+.progress-step{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:0.82rem;color:var(--text2)}
 .progress-step .dot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:background 0.3s}
 .progress-step.done .dot{background:var(--success)}
 .progress-step.active .dot{background:var(--accent);animation:pulse 1s infinite}
@@ -172,40 +202,73 @@ textarea{resize:vertical;min-height:90px}
 .progress-step.done{color:var(--text)}
 .progress-step.error{color:#e74c3c}
 
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center}
-.login-card{background:rgba(15,15,26,0.9);border:1px solid var(--border2);padding:2.5rem;width:100%;max-width:400px;border-radius:4px;backdrop-filter:blur(20px);box-shadow:0 40px 100px rgba(0,0,0,0.6)}
-.login-logo{text-align:center;margin-bottom:2rem}
-.login-logo strong{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:1.4rem;letter-spacing:0.18em}
-.login-logo p{color:var(--text3);font-size:0.8rem;margin-top:0.3rem;letter-spacing:0.12em}
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.login-card{background:rgba(15,15,26,0.9);border:1px solid var(--border2);padding:2rem;width:100%;max-width:380px;border-radius:6px;backdrop-filter:blur(20px);box-shadow:0 40px 100px rgba(0,0,0,0.6)}
+.login-logo{text-align:center;margin-bottom:1.75rem}
+.login-logo strong{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:1.3rem;letter-spacing:0.16em}
+.login-logo p{color:var(--text3);font-size:0.78rem;margin-top:0.3rem;letter-spacing:0.1em}
 
-.modal-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(8px)}
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.88);align-items:center;justify-content:center;padding:1.25rem;backdrop-filter:blur(8px)}
 .modal-overlay.open{display:flex}
-.modal{background:rgba(15,15,26,0.97);border:1px solid var(--border2);padding:1.75rem;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;border-radius:4px;animation:fadeUp 0.3s ease}
-.modal h3{font-size:1.1rem;font-weight:300;margin-bottom:1.25rem;color:var(--accent)}
-.modal-actions{display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem}
+.modal{background:rgba(15,15,26,0.98);border:1px solid var(--border2);padding:1.5rem;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;border-radius:6px;animation:fadeUp 0.3s ease}
+.modal h3{font-size:1rem;font-weight:300;margin-bottom:1.1rem;color:var(--accent)}
+.modal-actions{display:flex;gap:0.65rem;justify-content:flex-end;margin-top:1.25rem;flex-wrap:wrap}
 
-#chatWidget{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
-#chatToggle{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#000;font-size:1.4rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(200,169,110,0.5);transition:transform 0.3s,box-shadow 0.3s}
-#chatToggle:hover{transform:scale(1.1);box-shadow:0 8px 32px rgba(200,169,110,0.6)}
-#chatWindow{display:none;flex-direction:column;width:310px;height:430px;background:rgba(15,15,26,0.97);border:1px solid var(--border2);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);backdrop-filter:blur(20px)}
-#chatHeader{background:linear-gradient(135deg,rgba(200,169,110,0.15),rgba(120,80,200,0.1));padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-#chatHeader span{font-size:0.85rem;color:var(--accent);letter-spacing:0.05em}
-#chatHeader small{font-size:0.7rem;color:var(--success)}
-#chatCloseBtn{background:transparent;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer}
-#chatCloseBtn:hover{color:var(--text)}
-#chatMessages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column}
+/* CHATBOT */
+#chatWidget{position:fixed;bottom:1.25rem;right:1.25rem;z-index:999;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#chatToggle{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#000;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(200,169,110,0.5);transition:transform 0.3s;touch-action:manipulation}
+#chatToggle:hover{transform:scale(1.08)}
+#chatWindow{display:none;flex-direction:column;width:min(300px,90vw);height:400px;background:rgba(15,15,26,0.97);border:1px solid var(--border2);border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);backdrop-filter:blur(20px)}
+#chatHeader{background:linear-gradient(135deg,rgba(200,169,110,0.15),rgba(120,80,200,0.1));padding:11px 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+#chatHeader span{font-size:0.83rem;color:var(--accent);letter-spacing:0.04em}
+#chatHeader small{font-size:0.68rem;color:var(--success)}
+#chatCloseBtn{background:transparent;border:none;color:var(--text3);font-size:1rem;cursor:pointer;padding:4px}
+#chatMessages{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column}
 #chatMessages::-webkit-scrollbar{width:3px}
 #chatMessages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 #chatInputRow{display:flex;border-top:1px solid var(--border);background:rgba(22,22,42,0.5)}
-#chatInput{flex:1;background:transparent;border:none;color:var(--text);padding:11px 12px;font-size:0.83rem;font-family:'Georgia',serif;outline:none}
-#chatSendBtn{background:transparent;border:none;border-left:1px solid var(--border);color:var(--accent);padding:0 14px;font-size:1rem;cursor:pointer;transition:background 0.2s}
+#chatInput{flex:1;background:transparent;border:none;color:var(--text);padding:10px 11px;font-size:0.82rem;font-family:'Georgia',serif;outline:none}
+#chatSendBtn{background:transparent;border:none;border-left:1px solid var(--border);color:var(--accent);padding:0 13px;font-size:1rem;cursor:pointer;transition:background 0.2s}
 #chatSendBtn:hover{background:rgba(200,169,110,0.1)}
 
-@media(max-width:640px){
-  .lightbox-inner{flex-direction:column}.lightbox-info{width:100%}
-  .form-grid{grid-template-columns:1fr}
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+@media(max-width:768px){
+  :root{--nav-h:58px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
   .admin-layout{flex-direction:column}
-  .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border)}
+  .sidebar{display:none}
+  .admin-mobile-tabs{display:block}
+  .lightbox-inner{flex-direction:column}
+  .lightbox-info{width:100%}
+  .lightbox-img-wrap img{max-height:55vw}
+  .form-grid{grid-template-columns:1fr}
+  .gallery-grid{grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr));gap:1rem}
+  .art-card img{height:190px}
+  .section{padding:3rem 1.1rem}
+  .hero{min-height:88vh;padding:1.5rem 1.1rem}
+  .stats-grid{grid-template-columns:repeat(3,1fr)}
+  .manage-table th:nth-child(4),.manage-table td:nth-child(4){display:none}
+}
+
+@media(max-width:480px){
+  .hero-title{font-size:clamp(1.9rem,9vw,2.8rem)}
+  .gallery-grid{grid-template-columns:1fr 1fr;gap:0.75rem}
+  .art-card img{height:150px}
+  .art-card-body{padding:0.75rem 0.85rem}
+  .filters{gap:0.4rem}
+  .filter-btn{padding:5px 12px;font-size:0.7rem}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .manage-table th:nth-child(3),.manage-table td:nth-child(3){display:none}
+  .form-card{padding:1.1rem}
+  #chatWidget{bottom:1rem;right:1rem}
+  #chatWindow{width:calc(100vw - 2rem);height:380px}
+}
+
+@media(min-width:1400px){
+  .gallery-grid{grid-template-columns:repeat(4,1fr)}
 }
 </style>
 </head>
@@ -216,6 +279,7 @@ textarea{resize:vertical;min-height:90px}
 <input type="file" accept="image/*" id="editFile" style="display:none" onchange="handleEditFile(event)">
 <input type="file" accept="image/*" id="aboutPhotoFile" style="display:none" onchange="handleAboutPhoto(event)">
 
+<!-- NAV -->
 <nav>
   <div class="nav-logo">Swaddy Art Gallery</div>
   <div class="nav-links">
@@ -224,9 +288,20 @@ textarea{resize:vertical;min-height:90px}
     <button class="nav-btn" onclick="showPage('contactPage')">Contact</button>
     <button class="admin-btn" onclick="showPage('loginPage')">Admin</button>
   </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
-<!-- GALLERY -->
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <button onclick="showPage('galleryPage');closeMobileNav()">Gallery</button>
+  <button onclick="showPage('aboutPage');closeMobileNav()">About</button>
+  <button onclick="showPage('contactPage');closeMobileNav()">Contact</button>
+  <button onclick="showPage('loginPage');closeMobileNav()">Admin</button>
+</div>
+
+<!-- GALLERY PAGE -->
 <div id="galleryPage" class="page active">
   <div class="hero">
     <div class="hero-orb orb1"></div><div class="hero-orb orb2"></div><div class="hero-orb orb3"></div>
@@ -252,26 +327,26 @@ textarea{resize:vertical;min-height:90px}
   <div class="section about-mini">
     <div class="about-inner">
       <p class="section-label" style="text-align:center">About the Artist</p>
-      <h2 style="font-size:2rem;font-weight:300;margin-bottom:1.5rem;text-align:center">Crafting Emotions Through Art</h2>
+      <h2 style="font-size:clamp(1.4rem,4vw,2rem);font-weight:300;margin-bottom:1.25rem;text-align:center">Crafting Emotions Through Art</h2>
       <p style="color:var(--text2);line-height:1.9;text-align:center">Each piece born from a deep connection with light, shadow, and the human experience.</p>
     </div>
   </div>
   <footer><p>© 2025 Swaddy Art Gallery · All artworks are original works by the artist</p></footer>
 </div>
 
-<!-- ABOUT -->
+<!-- ABOUT PAGE -->
 <div id="aboutPage" class="page">
-  <div class="section" style="padding-top:8rem">
+  <div class="section" style="padding-top:5rem">
     <div class="about-inner">
       <p class="section-label">About</p>
       <div id="aboutPhotoWrap" style="display:none;margin-bottom:2rem">
-        <img id="publicAboutPhoto" style="width:170px;height:170px;object-fit:cover;border-radius:50%;border:3px solid var(--accent);margin:0 auto 1.25rem;display:block;box-shadow:0 0 40px rgba(200,169,110,0.3)" alt="artist">
+        <img id="publicAboutPhoto" style="width:150px;height:150px;object-fit:cover;border-radius:50%;border:3px solid var(--accent);margin:0 auto 1.25rem;display:block;box-shadow:0 0 40px rgba(200,169,110,0.3)" alt="artist">
       </div>
       <h2 class="section-title" id="publicAboutName" style="margin-bottom:0.5rem">Swanand Redekar</h2>
-      <p id="publicAboutTagline" style="color:var(--accent);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:1.5rem">Painter &amp; Sketch Artist</p>
+      <p id="publicAboutTagline" style="color:var(--accent);font-size:0.82rem;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:1.5rem">Painter &amp; Sketch Artist</p>
       <p id="publicAboutBio" style="color:var(--text2);line-height:1.9;margin-bottom:1.5rem">I am Swanand Redekar, a passionate visual artist known as Swaddy.</p>
       <a class="ig-btn" onclick="openLink('https://www.instagram.com/swaddy_art_gallery__')">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
         Follow on Instagram
       </a>
     </div>
@@ -279,9 +354,9 @@ textarea{resize:vertical;min-height:90px}
   <footer><p>© 2025 Swaddy Art Gallery</p></footer>
 </div>
 
-<!-- CONTACT -->
+<!-- CONTACT PAGE -->
 <div id="contactPage" class="page">
-  <div class="section" style="padding-top:8rem">
+  <div class="section" style="padding-top:5rem">
     <div class="contact-inner">
       <p class="section-label">Contact</p>
       <h2 class="section-title" style="margin-bottom:1rem">Get in Touch</h2>
@@ -289,7 +364,7 @@ textarea{resize:vertical;min-height:90px}
       <p class="contact-email">swanandredekar186@gmail.com</p>
       <div style="margin-top:1.5rem">
         <a class="ig-btn" onclick="openLink('https://www.instagram.com/swaddy_art_gallery__')">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           Follow on Instagram
         </a>
       </div>
@@ -298,7 +373,7 @@ textarea{resize:vertical;min-height:90px}
   <footer><p>© 2025 Swaddy Art Gallery</p></footer>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN PAGE -->
 <div id="loginPage" class="page" style="padding-top:0">
   <div class="login-wrap">
     <div class="login-card">
@@ -311,8 +386,18 @@ textarea{resize:vertical;min-height:90px}
   </div>
 </div>
 
-<!-- ADMIN -->
-<div id="adminPage" class="page" style="padding-top:64px">
+<!-- ADMIN PAGE -->
+<div id="adminPage" class="page" style="padding-top:var(--nav-h)">
+  <!-- Mobile tabs -->
+  <div class="admin-mobile-tabs">
+    <button class="admin-tab-btn active" onclick="adminNav('dashboard',this)">Dashboard</button>
+    <button class="admin-tab-btn" onclick="adminNav('upload',this)">Upload</button>
+    <button class="admin-tab-btn" onclick="adminNav('manage',this)">Manage</button>
+    <button class="admin-tab-btn" onclick="adminNav('categories',this)">Categories</button>
+    <button class="admin-tab-btn" onclick="adminNav('about',this)">About</button>
+    <button class="admin-tab-btn" onclick="adminNav('settings',this)">Settings</button>
+    <button class="admin-tab-btn" onclick="doLogout()">Logout</button>
+  </div>
   <div class="admin-layout">
     <aside class="sidebar">
       <div class="sidebar-logo"><strong>Swaddy Art Gallery</strong><p>Admin Panel</p></div>
@@ -323,24 +408,21 @@ textarea{resize:vertical;min-height:90px}
         <li><button onclick="adminNav('categories',this)">◆ Categories</button></li>
         <li><button onclick="adminNav('about',this)">☺ About Page</button></li>
         <li><button onclick="adminNav('settings',this)">⚙ GitHub Settings</button></li>
-        <li style="padding-top:2rem"><button onclick="doLogout()">← Logout</button></li>
+        <li style="padding-top:1.5rem"><button onclick="doLogout()">← Logout</button></li>
       </ul>
     </aside>
     <main class="admin-content">
 
       <!-- DASHBOARD -->
       <div id="sec-dashboard" class="admin-section active">
-        <div class="admin-header">
-          <h2>Dashboard</h2>
-          <p>Overview of your gallery &nbsp;<span class="saving-indicator" id="saveIndicator">✓ Pushed to GitHub</span></p>
-        </div>
+        <div class="admin-header"><h2>Dashboard</h2><p>Overview of your gallery</p></div>
         <div id="ghStatusBanner"></div>
         <div class="stats-grid" id="statsGrid"></div>
       </div>
 
       <!-- UPLOAD -->
       <div id="sec-upload" class="admin-section">
-        <div class="admin-header"><h2>Upload Artwork</h2><p>Image and data will be pushed directly to your GitHub repo</p></div>
+        <div class="admin-header"><h2>Upload Artwork</h2><p>Publishes directly to your GitHub repo</p></div>
         <div id="uploadAlert"></div>
         <div class="form-card">
           <div class="form-grid">
@@ -354,7 +436,7 @@ textarea{resize:vertical;min-height:90px}
             <div class="form-group full"><span class="form-label">Description</span><textarea id="artDesc" placeholder="A brief description..."></textarea></div>
             <div class="form-group full">
               <span class="form-label">Artwork Image *</span>
-              <div style="display:flex;align-items:center;gap:1rem;margin-top:0.25rem">
+              <div style="display:flex;align-items:center;gap:0.9rem;margin-top:0.25rem;flex-wrap:wrap">
                 <button class="pick-btn" onclick="document.getElementById('artFile').click()">📷 Choose Image</button>
                 <span id="fileNameLabel" class="file-name">No file chosen</span>
               </div>
@@ -370,19 +452,19 @@ textarea{resize:vertical;min-height:90px}
         <div class="publish-progress" id="publishProgress">
           <div class="progress-step" id="step1"><div class="dot"></div><span>Uploading image to GitHub...</span></div>
           <div class="progress-step" id="step2"><div class="dot"></div><span>Updating artworks.json...</span></div>
-          <div class="progress-step" id="step3"><div class="dot"></div><span>Done! GitHub Pages rebuilding (~30s)...</span></div>
+          <div class="progress-step" id="step3"><div class="dot"></div><span>Done! Live in ~30 seconds.</span></div>
         </div>
       </div>
 
       <!-- MANAGE -->
       <div id="sec-manage" class="admin-section">
         <div class="admin-header"><h2>Manage Artworks</h2><p>Edit, toggle visibility, or remove pieces</p></div>
-        <div class="form-card" style="margin-bottom:1rem;padding:0.75rem 1rem">
-          <input type="text" id="searchManage" placeholder="Search by title or category..." oninput="renderManageTable()" style="width:100%;border:none;background:transparent;color:var(--text);font-size:0.9rem;padding:4px 0">
+        <div class="form-card" style="margin-bottom:1rem;padding:0.7rem 1rem">
+          <input type="text" id="searchManage" placeholder="Search by title or category..." oninput="renderManageTable()" style="width:100%;border:none;background:transparent;color:var(--text);font-size:0.88rem;padding:4px 0">
         </div>
         <div class="table-wrap">
           <table class="manage-table">
-            <thead><tr><th>Preview</th><th>Title</th><th>Category</th><th>Collection</th><th>Status</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Img</th><th>Title</th><th>Category</th><th>Collection</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody id="manageBody"></tbody>
           </table>
         </div>
@@ -401,10 +483,10 @@ textarea{resize:vertical;min-height:90px}
         <div class="form-card">
           <div class="form-group"><span class="form-label">Your Name</span><input type="text" id="aboutName" placeholder="e.g. Swanand Redekar"></div>
           <div class="form-group"><span class="form-label">Tagline</span><input type="text" id="aboutTagline" placeholder="e.g. Painter & Sketch Artist"></div>
-          <div class="form-group"><span class="form-label">Bio</span><textarea id="aboutBio" style="min-height:130px" placeholder="Write a short bio..."></textarea></div>
+          <div class="form-group"><span class="form-label">Bio</span><textarea id="aboutBio" style="min-height:120px" placeholder="Write a short bio..."></textarea></div>
           <div class="form-group">
             <span class="form-label">Your Photo</span>
-            <div style="display:flex;align-items:center;gap:1rem;margin-top:0.25rem">
+            <div style="display:flex;align-items:center;gap:0.9rem;margin-top:0.25rem;flex-wrap:wrap">
               <button class="pick-btn" onclick="document.getElementById('aboutPhotoFile').click()">📷 Choose Photo</button>
               <span id="aboutPhotoLabel" class="file-name">No file chosen</span>
             </div>
@@ -418,34 +500,21 @@ textarea{resize:vertical;min-height:90px}
       <div id="sec-settings" class="admin-section">
         <div class="admin-header"><h2>GitHub Settings</h2><p>Connect your repo to enable publishing</p></div>
         <div class="token-banner">
-          <h4>🔑 How to get your Personal Access Token (PAT)</h4>
+          <h4>🔑 How to get your Personal Access Token</h4>
           <p>
-            1. Go to <a onclick="openLink('https://github.com/settings/tokens/new')" style="cursor:pointer">github.com/settings/tokens/new</a><br>
-            2. Give it a name like <b>swaddy-gallery</b><br>
-            3. Set expiration to <b>No expiration</b><br>
-            4. Under <b>Scopes</b>, check only ✅ <b>repo</b><br>
-            5. Click <b>Generate token</b> and paste it below<br><br>
-            ⚠️ Token is stored in your browser only — never shared.
+            1. Go to <a onclick="openLink('https://github.com/settings/tokens/new')">github.com/settings/tokens/new</a><br>
+            2. Note: <b>swaddy-gallery</b> · Expiration: <b>No expiration</b><br>
+            3. Check ✅ <b>repo</b> scope only<br>
+            4. Click <b>Generate token</b> → copy it → paste below<br><br>
+            ⚠️ Token is saved in your browser's localStorage.
           </p>
         </div>
         <div class="form-card">
-          <div class="form-group">
-            <span class="form-label">GitHub Personal Access Token</span>
-            <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-          </div>
-          <div class="form-group">
-            <span class="form-label">GitHub Username</span>
-            <input type="text" id="ghUser" value="MANTESH-dot">
-          </div>
-          <div class="form-group">
-            <span class="form-label">Repository Name</span>
-            <input type="text" id="ghRepo" value="swaddy-art-gallery">
-          </div>
-          <div class="form-group">
-            <span class="form-label">Branch</span>
-            <input type="text" id="ghBranch" value="main">
-          </div>
-          <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <div class="form-group"><span class="form-label">GitHub Personal Access Token</span><input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"></div>
+          <div class="form-group"><span class="form-label">GitHub Username</span><input type="text" id="ghUser" value="MANTESH-dot"></div>
+          <div class="form-group"><span class="form-label">Repository Name</span><input type="text" id="ghRepo" value="swaddy-art-gallery"></div>
+          <div class="form-group"><span class="form-label">Branch</span><input type="text" id="ghBranch" value="main"></div>
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
             <button class="btn" onclick="saveGHSettings()">✓ Save Settings</button>
             <button class="btn btn-success" onclick="testGHConnection()">⚡ Test Connection</button>
           </div>
@@ -490,9 +559,9 @@ textarea{resize:vertical;min-height:90px}
 
 <!-- DELETE MODAL -->
 <div class="modal-overlay" id="deleteModal">
-  <div class="modal" style="max-width:360px">
+  <div class="modal" style="max-width:340px">
     <h3>Delete Artwork?</h3>
-    <p style="color:var(--text2);font-size:0.9rem;margin-top:0.5rem">This will permanently remove it from GitHub.</p>
+    <p style="color:var(--text2);font-size:0.88rem;margin-top:0.5rem">This will permanently remove it from GitHub.</p>
     <input type="hidden" id="deleteId">
     <div class="modal-actions">
       <button class="btn btn-sm" onclick="closeDeleteModal()">Cancel</button>
@@ -522,21 +591,23 @@ textarea{resize:vertical;min-height:90px}
 (function(){
   const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
   let W,H,particles=[];
-  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;
+    if(!particles.length) for(let i=0;i<(W<600?50:90);i++) particles.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.3,a:Math.random()});
+  }
   resize();window.addEventListener('resize',resize);
-  for(let i=0;i<90;i++) particles.push({x:Math.random()*1920,y:Math.random()*1080,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.3,a:Math.random()});
-  let mx=960,my=540;
+  let mx=W/2,my=H/2;
   window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+  window.addEventListener('touchmove',e=>{if(e.touches[0]){mx=e.touches[0].clientX;my=e.touches[0].clientY}},{passive:true});
   function draw(){
     ctx.clearRect(0,0,W,H);
     for(let i=0;i<particles.length;i++) for(let j=i+1;j<particles.length;j++){
       const d=Math.hypot(particles[i].x-particles[j].x,particles[i].y-particles[j].y);
-      if(d<120){ctx.beginPath();ctx.strokeStyle=`rgba(200,169,110,${.08*(1-d/120)})`;ctx.lineWidth=.5;ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke()}
+      if(d<120){ctx.beginPath();ctx.strokeStyle=`rgba(200,169,110,${.07*(1-d/120)})`;ctx.lineWidth=.5;ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke()}
     }
     particles.forEach(p=>{
       const d=Math.hypot(p.x-mx,p.y-my);
-      if(d<160){ctx.beginPath();ctx.strokeStyle=`rgba(200,169,110,${.15*(1-d/160)})`;ctx.lineWidth=.7;ctx.moveTo(p.x,p.y);ctx.lineTo(mx,my);ctx.stroke()}
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(200,169,110,${p.a*.6})`;ctx.fill();
+      if(d<150){ctx.beginPath();ctx.strokeStyle=`rgba(200,169,110,${.12*(1-d/150)})`;ctx.lineWidth=.6;ctx.moveTo(p.x,p.y);ctx.lineTo(mx,my);ctx.stroke()}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(200,169,110,${p.a*.5})`;ctx.fill();
       p.x+=p.vx;p.y+=p.vy;
       if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
     });
@@ -545,69 +616,70 @@ textarea{resize:vertical;min-height:90px}
   draw();
 })();
 
-/* ===== 3D TILT ===== */
-document.addEventListener('mousemove',e=>{
-  document.querySelectorAll('.art-card').forEach(card=>{
-    const r=card.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
-    const dx=(e.clientX-cx)/r.width,dy=(e.clientY-cy)/r.height;
-    if(Math.sqrt(dx*dx+dy*dy)<1.2) card.style.transform=`perspective(800px) rotateY(${dx*10}deg) rotateX(${-dy*8}deg) translateZ(8px)`;
-    else card.style.transform='perspective(800px) rotateY(0) rotateX(0) translateZ(0)';
+/* ===== 3D TILT (desktop only) ===== */
+if(window.matchMedia('(hover:hover)').matches){
+  document.addEventListener('mousemove',e=>{
+    document.querySelectorAll('.art-card').forEach(card=>{
+      const r=card.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+      const dx=(e.clientX-cx)/r.width,dy=(e.clientY-cy)/r.height;
+      if(Math.sqrt(dx*dx+dy*dy)<1.2) card.style.transform=`perspective(800px) rotateY(${dx*10}deg) rotateX(${-dy*8}deg) translateZ(8px)`;
+      else card.style.transform='';
+    });
   });
-});
+}
+
+/* ===== MOBILE NAV ===== */
+function toggleMobileNav(){
+  const nav=document.getElementById('mobileNav'),h=document.getElementById('hamburger');
+  nav.classList.toggle('open');h.classList.toggle('open');
+}
+function closeMobileNav(){
+  document.getElementById('mobileNav').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
 
 /* ===== CONFIG ===== */
 const ADMIN_USER='admin',ADMIN_PASS='admin123';
-const GH_ARTWORKS_PATH='artworks.json';
-const GH_IMG_FOLDER='artworks';
-
-let artworks=[],isLoggedIn=false,editImageData=null,aboutPhotoData=null,saveTimer=null;
+const GH_ARTWORKS_PATH='artworks.json',GH_IMG_FOLDER='artworks';
+let artworks=[],isLoggedIn=false,editImageData=null,aboutPhotoData=null;
 let ghConfig={token:'',user:'MANTESH-dot',repo:'swaddy-art-gallery',branch:'main'};
 
 function openLink(url){window.open(url,'_blank')}
 
-/* ===== GITHUB SETTINGS ===== */
+/* ===== GH SETTINGS ===== */
 function loadGHSettings(){
-  const saved=localStorage.getItem('gh_config');
-  if(saved){try{const p=JSON.parse(saved);ghConfig={...ghConfig,...p};}catch(e){}}
+  const s=localStorage.getItem('gh_config');
+  if(s){try{ghConfig={...ghConfig,...JSON.parse(s)}}catch(e){}}
 }
-
 function saveGHSettings(){
   ghConfig.token=document.getElementById('ghToken').value.trim();
   ghConfig.user=document.getElementById('ghUser').value.trim();
   ghConfig.repo=document.getElementById('ghRepo').value.trim();
   ghConfig.branch=document.getElementById('ghBranch').value.trim();
-  // Save everything including token so user doesn't re-enter on reload
-  localStorage.setItem('gh_config',JSON.stringify({token:ghConfig.token,user:ghConfig.user,repo:ghConfig.repo,branch:ghConfig.branch}));
-  document.getElementById('ghTestResult').innerHTML='<div class="alert alert-success">✓ Settings saved! Token stored in memory.</div>';
+  localStorage.setItem('gh_config',JSON.stringify(ghConfig));
+  document.getElementById('ghTestResult').innerHTML='<div class="alert alert-success">✓ Settings saved!</div>';
 }
-
 function populateSettingsForm(){
-  document.getElementById('ghToken').value='';
+  document.getElementById('ghToken').value=ghConfig.token||'';
   document.getElementById('ghUser').value=ghConfig.user;
   document.getElementById('ghRepo').value=ghConfig.repo;
   document.getElementById('ghBranch').value=ghConfig.branch;
 }
-
 async function testGHConnection(){
   const el=document.getElementById('ghTestResult');
   const tok=document.getElementById('ghToken').value.trim()||ghConfig.token;
   const user=document.getElementById('ghUser').value.trim();
   const repo=document.getElementById('ghRepo').value.trim();
-  if(!tok){el.innerHTML='<div class="alert alert-error">Please enter your GitHub token first.</div>';return}
-  el.innerHTML='<div class="alert alert-info">Testing connection...</div>';
+  if(!tok){el.innerHTML='<div class="alert alert-error">Please enter your token first.</div>';return}
+  el.innerHTML='<div class="alert alert-info">Testing...</div>';
   try{
     const r=await fetch(`https://api.github.com/repos/${user}/${repo}`,{headers:{Authorization:`token ${tok}`,'Accept':'application/vnd.github.v3+json'}});
-    if(r.ok){
-      const d=await r.json();
-      el.innerHTML=`<div class="alert alert-success">✓ Connected! Repo: <b>${d.full_name}</b> — ${d.private?'Private':'Public'}</div>`;
-      ghConfig.token=tok;ghConfig.user=user;ghConfig.repo=repo;
-    } else {
-      el.innerHTML='<div class="alert alert-error">❌ Connection failed. Check your token and repo name.</div>';
-    }
-  }catch(e){el.innerHTML='<div class="alert alert-error">❌ Network error: '+e.message+'</div>'}
+    if(r.ok){const d=await r.json();el.innerHTML=`<div class="alert alert-success">✓ Connected! Repo: <b>${d.full_name}</b></div>`;ghConfig.token=tok;ghConfig.user=user;ghConfig.repo=repo;}
+    else el.innerHTML='<div class="alert alert-error">❌ Failed. Check token and repo name.</div>';
+  }catch(e){el.innerHTML='<div class="alert alert-error">❌ '+e.message+'</div>'}
 }
 
-/* ===== GITHUB API HELPERS ===== */
+/* ===== GH API ===== */
 async function ghRequest(path,method='GET',body=null){
   const url=`https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/${path}`;
   const opts={method,headers:{Authorization:`token ${ghConfig.token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'}};
@@ -615,79 +687,44 @@ async function ghRequest(path,method='GET',body=null){
   const r=await fetch(url,opts);
   return{ok:r.ok,status:r.status,data:await r.json()};
 }
+async function getFileSHA(path){const r=await ghRequest(path);return r.ok?r.data.sha:null}
+async function pushFile(path,b64,msg,sha=null){const b={message:msg,content:b64,branch:ghConfig.branch};if(sha)b.sha=sha;return ghRequest(path,'PUT',b)}
+function toBase64(s){return btoa(unescape(encodeURIComponent(s)))}
+function imgToBase64(d){return d.split(',')[1]}
 
-async function getFileSHA(path){
-  const r=await ghRequest(path);
-  return r.ok?r.data.sha:null;
-}
-
-async function pushFile(path,base64content,message,sha=null){
-  const body={message,content:base64content,branch:ghConfig.branch};
-  if(sha)body.sha=sha;
-  return ghRequest(path,'PUT',body);
-}
-
-function toBase64(str){return btoa(unescape(encodeURIComponent(str)))}
-function imgToBase64(dataUrl){return dataUrl.split(',')[1]}
-
-/* ===== LOAD ARTWORKS FROM GITHUB ===== */
+/* ===== LOAD DATA ===== */
 async function loadArtworks(){
-  loadGHSettings();
-  updateGHStatusBanner();
+  loadGHSettings();updateGHStatusBanner();
   try{
-    // Use GitHub API instead of raw URL to always get latest version
     const r=await fetch(`https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/${GH_ARTWORKS_PATH}`,{
       headers:ghConfig.token?{Authorization:`token ${ghConfig.token}`,'Accept':'application/vnd.github.v3+json'}:{'Accept':'application/vnd.github.v3+json'}
     });
-    if(r.ok){
-      const d=await r.json();
-      // GitHub API returns content as base64
-      const decoded=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
-      artworks=JSON.parse(decoded);
-    } else artworks=[];
-  }catch(e){artworks=[];console.error('Load error:',e)}
-  await loadAbout();
-  renderPublicGallery();
+    if(r.ok){const d=await r.json();artworks=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))))}
+    else artworks=[];
+  }catch(e){artworks=[]}
+  await loadAbout();renderPublicGallery();
 }
-
-function updateGHStatusBanner(){
-  const el=document.getElementById('ghStatusBanner');if(!el)return;
-  if(!ghConfig.token){
-    el.innerHTML='<div class="alert alert-info" style="max-width:680px">⚙️ <b>First time?</b> Go to <b>GitHub Settings</b> in the sidebar and paste your Personal Access Token to enable publishing.</div>';
-  } else {
-    el.innerHTML='<div class="alert alert-success" style="max-width:680px">✓ GitHub connected — uploads go directly to your repo.</div>';
-  }
-}
-
 async function loadAbout(){
   try{
     const r=await fetch(`https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/about.json`,{
       headers:ghConfig.token?{Authorization:`token ${ghConfig.token}`,'Accept':'application/vnd.github.v3+json'}:{'Accept':'application/vnd.github.v3+json'}
     });
-    if(r.ok){
-      const d=await r.json();
-      const decoded=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
-      applyAboutToPublic(JSON.parse(decoded));
-    }
+    if(r.ok){const d=await r.json();applyAboutToPublic(JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))))))}
   }catch(e){}
 }
-
 function applyAboutToPublic(d){
   if(d.name)document.getElementById('publicAboutName').textContent=d.name;
   if(d.tagline)document.getElementById('publicAboutTagline').textContent=d.tagline;
   if(d.bio)document.getElementById('publicAboutBio').textContent=d.bio;
   if(d.photo){document.getElementById('publicAboutPhoto').src=d.photo;document.getElementById('aboutPhotoWrap').style.display='block'}
 }
-
 async function loadAboutIntoForm(){
   try{
     const r=await fetch(`https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/about.json`,{
       headers:ghConfig.token?{Authorization:`token ${ghConfig.token}`,'Accept':'application/vnd.github.v3+json'}:{'Accept':'application/vnd.github.v3+json'}
     });
     if(r.ok){
-      const d=await r.json();
-      const decoded=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
-      const data=JSON.parse(decoded);
+      const d=await r.json(),data=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
       document.getElementById('aboutName').value=data.name||'';
       document.getElementById('aboutTagline').value=data.tagline||'';
       document.getElementById('aboutBio').value=data.bio||'';
@@ -695,106 +732,74 @@ async function loadAboutIntoForm(){
     }
   }catch(e){}
 }
-
-/* ===== SAVE ARTWORKS JSON TO GITHUB ===== */
 async function saveArtworksToGitHub(){
-  if(!ghConfig.token) return false;
+  if(!ghConfig.token)return false;
   const sha=await getFileSHA(GH_ARTWORKS_PATH);
-  const content=toBase64(JSON.stringify(artworks,null,2));
-  const r=await pushFile(GH_ARTWORKS_PATH,content,'Update artworks.json',sha);
-  return r.ok;
+  return(await pushFile(GH_ARTWORKS_PATH,toBase64(JSON.stringify(artworks,null,2)),'Update artworks.json',sha)).ok;
 }
 
-/* ===== UPLOAD ARTWORK ===== */
+function updateGHStatusBanner(){
+  const el=document.getElementById('ghStatusBanner');if(!el)return;
+  el.innerHTML=ghConfig.token
+    ?'<div class="alert alert-success" style="max-width:680px">✓ GitHub connected — uploads go directly to your repo.</div>'
+    :'<div class="alert alert-info" style="max-width:680px">⚙️ Go to <b>GitHub Settings</b> tab and paste your Personal Access Token to enable publishing.</div>';
+}
+
+/* ===== UPLOAD ===== */
 async function uploadArtwork(){
-  if(!ghConfig.token){
-    document.getElementById('uploadAlert').innerHTML='<div class="alert alert-error">⚙️ Please set your GitHub token in <b>GitHub Settings</b> first.</div>';return;
-  }
+  if(!ghConfig.token){document.getElementById('uploadAlert').innerHTML='<div class="alert alert-error">⚙️ Set your GitHub token in Settings first.</div>';return}
   const title=document.getElementById('artTitle').value.trim();
   const cat=document.getElementById('artCategory').value;
   const imgSrc=document.getElementById('imgPreview').src;
   const alertEl=document.getElementById('uploadAlert');
   if(!title){alertEl.innerHTML='<div class="alert alert-error">Please enter a title.</div>';return}
   if(!cat){alertEl.innerHTML='<div class="alert alert-error">Please select a category.</div>';return}
-  if(!imgSrc||!imgSrc.startsWith('data:')){alertEl.innerHTML='<div class="alert alert-error">Please choose an image file.</div>';return}
-
+  if(!imgSrc||!imgSrc.startsWith('data:')){alertEl.innerHTML='<div class="alert alert-error">Please choose an image.</div>';return}
   const btn=document.getElementById('publishBtn');
-  btn.disabled=true;btn.textContent='Publishing...';
-  alertEl.innerHTML='';
-
-  const prog=document.getElementById('publishProgress');
-  prog.style.display='block';
+  btn.disabled=true;btn.textContent='Publishing...';alertEl.innerHTML='';
+  const prog=document.getElementById('publishProgress');prog.style.display='block';
   setStep('step1','active');setStep('step2','');setStep('step3','');
-
   try{
-    // 1. Upload image
     const ext=document.getElementById('fileNameLabel').textContent.split('.').pop()||'jpg';
     const slug=title.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+Date.now();
     const imgPath=`${GH_IMG_FOLDER}/${slug}.${ext}`;
-    const imgBase64=imgToBase64(imgSrc);
-    const imgRes=await pushFile(imgPath,imgBase64,`Add artwork: ${title}`);
-    if(!imgRes.ok){setStep('step1','error');alertEl.innerHTML='<div class="alert alert-error">❌ Image upload failed: '+JSON.stringify(imgRes.data.message)+'</div>';resetBtn();return}
+    const imgRes=await pushFile(imgPath,imgToBase64(imgSrc),`Add artwork: ${title}`);
+    if(!imgRes.ok){setStep('step1','error');alertEl.innerHTML='<div class="alert alert-error">❌ Image upload failed.</div>';resetBtn();return}
     setStep('step1','done');setStep('step2','active');
-
-    // 2. Update artworks.json
     const imgUrl=`https://raw.githubusercontent.com/${ghConfig.user}/${ghConfig.repo}/${ghConfig.branch}/${imgPath}`;
     const newId=artworks.length?Math.max(...artworks.map(a=>a.id))+1:1;
-    artworks.push({
-      id:newId,title,category:cat,
-      description:document.getElementById('artDesc').value.trim(),
-      collection:document.getElementById('artCollection').value.trim(),
-      visible:document.getElementById('artVisible').value==='visible',
-      img:imgUrl
-    });
+    artworks.push({id:newId,title,category:cat,description:document.getElementById('artDesc').value.trim(),collection:document.getElementById('artCollection').value.trim(),visible:document.getElementById('artVisible').value==='visible',img:imgUrl});
     const ok=await saveArtworksToGitHub();
     if(!ok){setStep('step2','error');alertEl.innerHTML='<div class="alert alert-error">❌ Failed to update artworks.json</div>';artworks.pop();resetBtn();return}
     setStep('step2','done');setStep('step3','active');
-
-    // 3. Done
     setTimeout(()=>{
       setStep('step3','done');
-      alertEl.innerHTML='<div class="alert alert-success">✓ Artwork published! Live on your site in ~30 seconds.</div>';
+      alertEl.innerHTML='<div class="alert alert-success">✓ Published! Live on your site in ~30s.</div>';
       ['artTitle','artDesc','artCollection'].forEach(id=>document.getElementById(id).value='');
       document.getElementById('artCategory').value='';document.getElementById('artVisible').value='visible';
       document.getElementById('artFile').value='';document.getElementById('fileNameLabel').textContent='No file chosen';
       document.getElementById('imgPreviewBox').style.display='none';
       renderPublicGallery();renderStats();
-      setTimeout(()=>{alertEl.innerHTML='';prog.style.display='none';},5000);
+      setTimeout(()=>{alertEl.innerHTML='';prog.style.display='none'},5000);
     },800);
-  }catch(e){
-    alertEl.innerHTML='<div class="alert alert-error">❌ Error: '+e.message+'</div>';
-  }
+  }catch(e){alertEl.innerHTML='<div class="alert alert-error">❌ '+e.message+'</div>'}
   resetBtn();
 }
-
-function setStep(id,state){
-  const el=document.getElementById(id);if(!el)return;
-  el.className='progress-step'+(state?' '+state:'');
-}
-
-function resetBtn(){
-  const btn=document.getElementById('publishBtn');
-  btn.disabled=false;btn.textContent='🚀 Publish to Gallery';
-}
+function setStep(id,state){const el=document.getElementById(id);if(el)el.className='progress-step'+(state?' '+state:'')}
+function resetBtn(){const b=document.getElementById('publishBtn');b.disabled=false;b.textContent='🚀 Publish to Gallery'}
 
 /* ===== SAVE ABOUT ===== */
 async function saveAbout(){
-  if(!ghConfig.token){document.getElementById('aboutAdminAlert').innerHTML='<div class="alert alert-error">Please set GitHub token in Settings first.</div>';return}
-  const name=document.getElementById('aboutName').value.trim();
-  const alertEl=document.getElementById('aboutAdminAlert');
+  if(!ghConfig.token){document.getElementById('aboutAdminAlert').innerHTML='<div class="alert alert-error">Set GitHub token in Settings first.</div>';return}
+  const name=document.getElementById('aboutName').value.trim(),alertEl=document.getElementById('aboutAdminAlert');
   if(!name){alertEl.innerHTML='<div class="alert alert-error">Please enter your name.</div>';return}
   const d={name,tagline:document.getElementById('aboutTagline').value.trim(),bio:document.getElementById('aboutBio').value.trim(),photo:aboutPhotoData||''};
   try{
     const sha=await getFileSHA('about.json');
     const r=await pushFile('about.json',toBase64(JSON.stringify(d,null,2)),'Update about.json',sha);
-    if(r.ok){
-      applyAboutToPublic(d);
-      alertEl.innerHTML='<div class="alert alert-success">✓ About page saved to GitHub!</div>';
-      setTimeout(()=>alertEl.innerHTML='',3000);
-    } else {
-      alertEl.innerHTML='<div class="alert alert-error">❌ Save failed: '+JSON.stringify(r.data.message)+'</div>';
-    }
-  }catch(e){alertEl.innerHTML='<div class="alert alert-error">Error: '+e.message+'</div>'}
+    if(r.ok){applyAboutToPublic(d);alertEl.innerHTML='<div class="alert alert-success">✓ Saved to GitHub!</div>';setTimeout(()=>alertEl.innerHTML='',3000)}
+    else alertEl.innerHTML='<div class="alert alert-error">❌ Save failed.</div>';
+  }catch(e){alertEl.innerHTML='<div class="alert alert-error">'+e.message+'</div>'}
 }
 
 /* ===== PAGE NAV ===== */
@@ -802,38 +807,41 @@ function showPage(id){
   if(id==='adminPage'&&!isLoggedIn){showPage('loginPage');return}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
   if(id==='galleryPage')renderPublicGallery();
-  if(id==='adminPage'){renderStats();renderManageTable();renderCategories();updateGHStatusBanner();}
+  if(id==='adminPage'){renderStats();renderManageTable();renderCategories();updateGHStatusBanner()}
 }
-
 function doLogin(){
   const u=document.getElementById('loginUser').value.trim(),p=document.getElementById('loginPass').value;
   if(u===ADMIN_USER&&p===ADMIN_PASS){isLoggedIn=true;document.getElementById('loginAlert').innerHTML='';showPage('adminPage')}
-  else document.getElementById('loginAlert').innerHTML='<div class="alert alert-error">Invalid username or password.</div>'
+  else document.getElementById('loginAlert').innerHTML='<div class="alert alert-error">Invalid credentials.</div>'
 }
 function doLogout(){isLoggedIn=false;showPage('galleryPage')}
 
 function adminNav(sec,el){
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+sec).classList.add('active');
-  document.querySelectorAll('.sidebar-nav button').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
+  document.querySelectorAll('.sidebar-nav button,.admin-tab-btn').forEach(b=>b.classList.remove('active'));
+  // activate matching buttons in both sidebar and mobile tabs
+  document.querySelectorAll('.sidebar-nav button,.admin-tab-btn').forEach(b=>{
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+sec+"'"))b.classList.add('active');
+  });
   if(sec==='manage')renderManageTable();
   if(sec==='categories')renderCategories();
-  if(sec==='dashboard'){renderStats();updateGHStatusBanner();}
+  if(sec==='dashboard'){renderStats();updateGHStatusBanner()}
   if(sec==='about')loadAboutIntoForm();
   if(sec==='settings')populateSettingsForm();
 }
 
-/* ===== GALLERY RENDER ===== */
+/* ===== GALLERY ===== */
 function renderPublicGallery(filter='all'){
   const grid=document.getElementById('publicGrid');
   const list=artworks.filter(a=>a.visible&&(filter==='all'||a.category===filter));
-  if(!list.length){grid.innerHTML='<div class="empty-gallery"><p style="font-size:3rem;margin-bottom:1rem">◆</p><p>No artworks yet. Check back soon!</p></div>';return}
+  if(!list.length){grid.innerHTML='<div class="empty-gallery"><p style="font-size:2.5rem;margin-bottom:1rem">◆</p><p>No artworks yet. Check back soon!</p></div>';return}
   grid.innerHTML=list.map((a,i)=>`
-    <div class="art-card" onclick="openLightbox(${a.id})" style="animation-delay:${i*0.06}s">
+    <div class="art-card" onclick="openLightbox(${a.id})" style="animation-delay:${i*0.05}s">
       <div class="art-card-img-wrap">
-        <img src="${a.img}" alt="${a.title}">
+        <img src="${a.img}" alt="${a.title}" loading="lazy">
         <div class="art-card-overlay"></div>
       </div>
       <div class="art-card-body">
@@ -843,12 +851,10 @@ function renderPublicGallery(filter='all'){
       </div>
     </div>`).join('');
 }
-
 function filterGallery(cat,btn){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');renderPublicGallery(cat);
 }
-
 function openLightbox(id){
   const a=artworks.find(x=>x.id===id);if(!a)return;
   document.getElementById('lbImg').src=a.img;
@@ -856,45 +862,41 @@ function openLightbox(id){
   document.getElementById('lbCat').textContent=a.category+(a.collection?' · '+a.collection:'');
   document.getElementById('lbDesc').textContent=a.description||'';
   document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
 }
 function closeLightbox(e){
-  if(!e||e.target===document.getElementById('lightbox')||e.currentTarget.classList.contains('lightbox-close'))
+  if(!e||e.target===document.getElementById('lightbox')||e.currentTarget.classList.contains('lightbox-close')){
     document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow='';
+  }
 }
 
 /* ===== FILE HANDLERS ===== */
 function handleFileSelect(e){
   const file=e.target.files[0];if(!file)return;
   document.getElementById('fileNameLabel').textContent=file.name;
-  const r=new FileReader();
-  r.onload=ev=>{document.getElementById('imgPreview').src=ev.target.result;document.getElementById('imgPreviewBox').style.display='block'};
-  r.readAsDataURL(file);
+  const r=new FileReader();r.onload=ev=>{document.getElementById('imgPreview').src=ev.target.result;document.getElementById('imgPreviewBox').style.display='block'};r.readAsDataURL(file);
 }
 function handleEditFile(e){
   const file=e.target.files[0];if(!file)return;
-  const r=new FileReader();
-  r.onload=ev=>{editImageData=ev.target.result};
-  r.readAsDataURL(file);
+  const r=new FileReader();r.onload=ev=>{editImageData=ev.target.result};r.readAsDataURL(file);
 }
 function handleAboutPhoto(e){
   const file=e.target.files[0];if(!file)return;
   document.getElementById('aboutPhotoLabel').textContent=file.name;
-  const r=new FileReader();
-  r.onload=ev=>{aboutPhotoData=ev.target.result;document.getElementById('aboutPhotoPreview').src=aboutPhotoData;document.getElementById('aboutPhotoPreviewBox').style.display='block'};
-  r.readAsDataURL(file);
+  const r=new FileReader();r.onload=ev=>{aboutPhotoData=ev.target.result;document.getElementById('aboutPhotoPreview').src=aboutPhotoData;document.getElementById('aboutPhotoPreviewBox').style.display='block'};r.readAsDataURL(file);
 }
 
-/* ===== MANAGE TABLE ===== */
+/* ===== MANAGE ===== */
 function renderStats(){
-  const t=artworks.length,v=artworks.filter(a=>a.visible).length;
-  const cats={};artworks.forEach(a=>cats[a.category]=(cats[a.category]||0)+1);
+  const t=artworks.length,v=artworks.filter(a=>a.visible).length,cats={};
+  artworks.forEach(a=>cats[a.category]=(cats[a.category]||0)+1);
   document.getElementById('statsGrid').innerHTML=`
-    <div class="stat-card"><div class="stat-val">${t}</div><div class="stat-label">Total Works</div></div>
+    <div class="stat-card"><div class="stat-val">${t}</div><div class="stat-label">Total</div></div>
     <div class="stat-card"><div class="stat-val">${v}</div><div class="stat-label">Published</div></div>
     <div class="stat-card"><div class="stat-val">${t-v}</div><div class="stat-label">Drafts</div></div>
     ${Object.entries(cats).map(([c,n])=>`<div class="stat-card"><div class="stat-val">${n}</div><div class="stat-label">${c}</div></div>`).join('')}`;
 }
-
 function renderManageTable(){
   const q=(document.getElementById('searchManage').value||'').toLowerCase();
   const list=artworks.filter(a=>!q||a.title.toLowerCase().includes(q)||a.category.toLowerCase().includes(q));
@@ -902,7 +904,7 @@ function renderManageTable(){
   if(!list.length){body.innerHTML='<tr><td colspan="6" style="color:var(--text3);padding:2rem;text-align:center">No artworks found.</td></tr>';return}
   body.innerHTML=list.map(a=>`
     <tr>
-      <td><img src="${a.img}" alt="${a.title}"></td>
+      <td><img src="${a.img}" alt="${a.title}" loading="lazy"></td>
       <td>${a.title}</td><td>${a.category}</td><td>${a.collection||'—'}</td>
       <td><span class="badge ${a.visible?'badge-visible':'badge-hidden'}">${a.visible?'Visible':'Hidden'}</span></td>
       <td><div class="td-actions">
@@ -912,14 +914,10 @@ function renderManageTable(){
       </div></td>
     </tr>`).join('');
 }
-
 async function toggleVisibility(id){
   const a=artworks.find(x=>x.id===id);if(!a)return;
-  a.visible=!a.visible;
-  await saveArtworksToGitHub();
-  renderManageTable();renderStats();
+  a.visible=!a.visible;await saveArtworksToGitHub();renderManageTable();renderStats();
 }
-
 function openEditModal(id){
   const a=artworks.find(x=>x.id===id);if(!a)return;
   document.getElementById('editId').value=id;
@@ -927,27 +925,21 @@ function openEditModal(id){
   document.getElementById('editCategory').value=a.category;
   document.getElementById('editCollection').value=a.collection||'';
   document.getElementById('editDesc').value=a.description||'';
-  editImageData=null;
-  document.getElementById('editModal').classList.add('open');
+  editImageData=null;document.getElementById('editModal').classList.add('open');
 }
 function closeEditModal(){document.getElementById('editModal').classList.remove('open');editImageData=null}
-
 async function saveEdit(){
-  const id=parseInt(document.getElementById('editId').value);
-  const a=artworks.find(x=>x.id===id);if(!a)return;
+  const id=parseInt(document.getElementById('editId').value),a=artworks.find(x=>x.id===id);if(!a)return;
   a.title=document.getElementById('editTitle').value.trim()||a.title;
   a.category=document.getElementById('editCategory').value;
   a.collection=document.getElementById('editCollection').value.trim();
   a.description=document.getElementById('editDesc').value.trim();
-  await saveArtworksToGitHub();
-  closeEditModal();renderManageTable();renderStats();
+  await saveArtworksToGitHub();closeEditModal();renderManageTable();renderStats();
 }
-
 async function confirmDelete(){
   const id=parseInt(document.getElementById('deleteId').value);
   artworks=artworks.filter(x=>x.id!==id);
-  await saveArtworksToGitHub();
-  closeDeleteModal();renderManageTable();renderStats();renderPublicGallery();
+  await saveArtworksToGitHub();closeDeleteModal();renderManageTable();renderStats();renderPublicGallery();
 }
 function openDeleteModal(id){document.getElementById('deleteId').value=id;document.getElementById('deleteModal').classList.add('open')}
 function closeDeleteModal(){document.getElementById('deleteModal').classList.remove('open')}
@@ -958,11 +950,11 @@ function renderCategories(){
   if(!Object.keys(cats).length){el.innerHTML='<p style="color:var(--text3)">No artworks yet.</p>';return}
   el.innerHTML=Object.entries(cats).map(([cat,items])=>`
     <div style="margin-bottom:2rem">
-      <p style="font-size:0.8rem;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-bottom:1rem">${cat} (${items.length})</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.75rem">
+      <p style="font-size:0.78rem;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-bottom:1rem">${cat} (${items.length})</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0.65rem">
         ${items.map(a=>`<div style="background:var(--glass);border:1px solid var(--border2);overflow:hidden;border-radius:4px">
-          <img src="${a.img}" alt="${a.title}" style="width:100%;height:100px;object-fit:cover;display:block">
-          <div style="padding:0.6rem 0.75rem"><p style="font-size:0.82rem">${a.title}</p><p style="font-size:0.72rem;color:var(--text3)">${a.visible?'Visible':'Hidden'}</p></div>
+          <img src="${a.img}" alt="${a.title}" style="width:100%;height:90px;object-fit:cover;display:block" loading="lazy">
+          <div style="padding:0.5rem 0.65rem"><p style="font-size:0.78rem">${a.title}</p><p style="font-size:0.68rem;color:var(--text3)">${a.visible?'Visible':'Hidden'}</p></div>
         </div>`).join('')}
       </div>
     </div>`).join('');
@@ -970,11 +962,11 @@ function renderCategories(){
 
 /* ===== CHATBOT ===== */
 const botReplies={
-  greet:{triggers:['hi','hello','hey','hii','sup'],reply:"Hi there! 👋 Welcome to Swaddy Art Gallery. How can I help you?",options:['About the artist','Contact info','Buy / Commission','Negotiate price']},
-  about:{triggers:['about','artist','swaddy','swanand','who'],reply:"🎨 Swanand Redekar, known as <b>Swaddy</b>, is a passionate visual artist specializing in Watercolor, Charcoal, Pencil, Oil Paint & Acrylic.",options:['Contact info','Buy / Commission','Negotiate price']},
-  contact:{triggers:['contact','phone','email','reach','whatsapp'],reply:"📞 <b>WhatsApp:</b> <a href='tel:7349028654' style='color:var(--accent)'>7349028654</a><br>📧 <b>Email:</b> swanandredekar186@gmail.com<br>📸 Instagram: @swaddy_art_gallery__",options:['Buy / Commission','Negotiate price','Thanks!']},
-  buy:{triggers:['buy','purchase','commission','order','interested','artwork'],reply:"✨ Interested in a piece?<br>• <b>WhatsApp</b> 7349028654<br>• <b>Email</b> swanandredekar186@gmail.com<br>We'll discuss size, medium & delivery!",options:['Negotiate price','Contact info','Thanks!']},
-  negotiate:{triggers:['negotiate','price','cost','discount','deal','rate','budget'],reply:"💬 Swaddy is <b>open to fair negotiations!</b><br>• Prices depend on size & medium<br>• Bulk deals available<br>• Custom commissions flexible 😊",options:['Contact info','Buy / Commission','Thanks!']},
+  greet:{triggers:['hi','hello','hey','hii','sup'],reply:"Hi there! 👋 Welcome to Swaddy Art Gallery!",options:['About the artist','Contact info','Buy / Commission','Negotiate price']},
+  about:{triggers:['about','artist','swaddy','swanand','who'],reply:"🎨 <b>Swanand Redekar</b> (Swaddy) is a passionate visual artist specializing in Watercolor, Charcoal, Pencil, Oil Paint & Acrylic.",options:['Contact info','Buy / Commission','Negotiate price']},
+  contact:{triggers:['contact','phone','email','reach','whatsapp'],reply:"📞 <b>WhatsApp:</b> <a href='tel:7349028654' style='color:var(--accent)'>7349028654</a><br>📧 swanandredekar186@gmail.com<br>📸 @swaddy_art_gallery__",options:['Buy / Commission','Negotiate price','Thanks!']},
+  buy:{triggers:['buy','purchase','commission','order','interested','artwork'],reply:"✨ Interested?<br>• <b>WhatsApp</b> 7349028654<br>• <b>Email</b> swanandredekar186@gmail.com<br>We'll discuss size, medium & delivery!",options:['Negotiate price','Contact info','Thanks!']},
+  negotiate:{triggers:['negotiate','price','cost','discount','deal','budget'],reply:"💬 Swaddy is <b>open to fair negotiations!</b><br>• Prices depend on size & medium<br>• Bulk & commission deals available 😊",options:['Contact info','Buy / Commission','Thanks!']},
   thanks:{triggers:['thanks','thank','bye','ok','great','awesome'],reply:"You're welcome! 😊 Hope you find a piece you love! 🎨",options:['About the artist','Contact info']}
 };
 function getBotReply(msg){
@@ -984,19 +976,18 @@ function getBotReply(msg){
 }
 function addMsg(text,sender,isHTML=false){
   const box=document.getElementById('chatMessages'),div=document.createElement('div');
-  div.style.cssText=`display:flex;justify-content:${sender==='user'?'flex-end':'flex-start'};margin-bottom:10px`;
+  div.style.cssText=`display:flex;justify-content:${sender==='user'?'flex-end':'flex-start'};margin-bottom:9px`;
   const b=document.createElement('div');
-  b.style.cssText=`max-width:82%;padding:9px 13px;font-size:0.83rem;line-height:1.6;border-radius:${sender==='user'?'14px 14px 4px 14px':'14px 14px 14px 4px'};background:${sender==='user'?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--bg3)'};color:${sender==='user'?'#000':'var(--text)'};border:1px solid ${sender==='user'?'transparent':'var(--border2)'}`;
+  b.style.cssText=`max-width:84%;padding:8px 12px;font-size:0.8rem;line-height:1.6;border-radius:${sender==='user'?'14px 14px 4px 14px':'14px 14px 14px 4px'};background:${sender==='user'?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--bg3)'};color:${sender==='user'?'#000':'var(--text)'};border:1px solid ${sender==='user'?'transparent':'var(--border2)'}`;
   if(isHTML)b.innerHTML=text;else b.textContent=text;
   div.appendChild(b);box.appendChild(div);box.scrollTop=box.scrollHeight;
 }
 function addOptions(opts){
   const box=document.getElementById('chatMessages'),wrap=document.createElement('div');
-  wrap.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;padding-left:4px';
+  wrap.style.cssText='display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;padding-left:2px';
   opts.forEach(opt=>{
-    const btn=document.createElement('button');
-    btn.textContent=opt;
-    btn.style.cssText='background:transparent;border:1px solid var(--accent);color:var(--accent);padding:5px 12px;font-size:0.74rem;cursor:pointer;border-radius:20px;font-family:Georgia,serif;transition:all 0.2s';
+    const btn=document.createElement('button');btn.textContent=opt;
+    btn.style.cssText='background:transparent;border:1px solid var(--accent);color:var(--accent);padding:4px 10px;font-size:0.72rem;cursor:pointer;border-radius:20px;font-family:Georgia,serif;transition:all 0.2s';
     btn.onmouseover=()=>{btn.style.background='var(--accent)';btn.style.color='#000'};
     btn.onmouseout=()=>{btn.style.background='transparent';btn.style.color='var(--accent)'};
     btn.onclick=()=>{wrap.remove();handleChat(opt)};
@@ -1006,17 +997,19 @@ function addOptions(opts){
 }
 function handleChat(msg){
   addMsg(msg,'user');
-  setTimeout(()=>{const res=getBotReply(msg);addMsg(res.reply,'bot',true);if(res.options)setTimeout(()=>addOptions(res.options),300);},400);
+  setTimeout(()=>{const res=getBotReply(msg);addMsg(res.reply,'bot',true);if(res.options)setTimeout(()=>addOptions(res.options),300)},400);
 }
 function sendChatMsg(){const inp=document.getElementById('chatInput'),msg=inp.value.trim();if(!msg)return;inp.value='';handleChat(msg)}
 function toggleChat(){
   const win=document.getElementById('chatWindow'),isOpen=win.style.display==='flex';
   win.style.display=isOpen?'none':'flex';
   if(!isOpen&&!document.getElementById('chatMessages').children.length){
-    setTimeout(()=>{addMsg("Hi! 👋 I'm Swaddy's assistant!",'bot');setTimeout(()=>addOptions(['About the artist','Contact info','Buy / Commission','Negotiate price']),300);},200);
+    setTimeout(()=>{addMsg("Hi! 👋 I'm Swaddy's assistant!",'bot');setTimeout(()=>addOptions(['About the artist','Contact info','Buy / Commission','Negotiate price']),300)},200);
   }
 }
 
+// Close lightbox on escape
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox()});
 document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 loadArtworks();
 </script>
