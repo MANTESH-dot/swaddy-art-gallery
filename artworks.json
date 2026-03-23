@@ -14,7 +14,7 @@
     "category": "Oil Paint",
     "description": "A  girl",
     "collection": "Render",
-    "visible": true,
+    "visible": false,
     "img": "https://raw.githubusercontent.com/MANTESH-dot/swaddy-art-gallery/main/artworks/georgiosa-1774258463371.png"
   }
 ]
