@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": 1,
+    "title": "Lord Krishna",
+    "category": "Acrylic",
+    "description": "Lord Krishna",
+    "collection": "Mystic Gods",
+    "visible": true,
+    "img": "https://raw.githubusercontent.com/MANTESH-dot/swaddy-art-gallery/main/artworks/lord-krishna-1774257352955.png"
+  }
+]
