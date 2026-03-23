@@ -654,7 +654,19 @@ const GH_ARTWORKS_PATH='artworks.json',GH_IMG_FOLDER='artworks';
 let artworks=[],isLoggedIn=false,editImageData=null,aboutPhotoData=null;
 let ghConfig={token:'',user:'MANTESH-dot',repo:'swaddy-art-gallery',branch:'main'};
 
-function openLink(url){window.open(url,'_blank')}
+function openLink(url){
+  // Use intent URL on Android to force browser, fallback to web on iOS/desktop
+  const username='swaddy_art_gallery__';
+  if(url.includes('instagram.com')){
+    // Always open in browser tab, not the app
+    const webUrl='https://www.instagram.com/'+username+'/';
+    const a=document.createElement('a');
+    a.href=webUrl;a.target='_blank';a.rel='noopener noreferrer';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+  } else {
+    window.open(url,'_blank','noopener,noreferrer');
+  }
+}
 
 /* ===== GH SETTINGS ===== */
 function loadGHSettings(){
